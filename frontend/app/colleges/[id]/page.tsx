@@ -8,11 +8,12 @@ import { useCompare } from "@/context/CompareContext";
 import { useToast } from "@/components/ToastProvider";
 import type { CollegeDetail } from "@/lib/types";
 
-function Stars({ rating }: { rating: number }) {
+function Stars({ rating }: { rating: number | string | null }) {
+  const r = Number(rating);
   return (
     <span className="stars">
       {Array.from({ length: 5 }, (_, i) =>
-        i < Math.floor(rating) ? "★" : i === Math.floor(rating) && rating % 1 >= 0.5 ? "½" : "☆"
+        i < Math.floor(r) ? "★" : i === Math.floor(r) && r % 1 >= 0.5 ? "½" : "☆"
       ).join("")}
     </span>
   );
@@ -200,7 +201,7 @@ export default function CollegeDetailPage() {
             {[
               { label: "Fees (min)", value: formatFees(college.fees_min) },
               { label: "Fees (max)", value: formatFees(college.fees_max) },
-              { label: "Rating", value: `${college.rating.toFixed(1)} / 5` },
+              { label: "Rating", value: `${Number(college.rating).toFixed(1)} / 5` },
               { label: "Placement", value: college.placement_percent ? `${college.placement_percent}%` : "N/A" },
               { label: "Avg Package", value: college.avg_package ? formatPkg(college.avg_package) : "N/A" },
             ].map((s) => (
@@ -262,7 +263,7 @@ export default function CollegeDetailPage() {
                     { label: "Location", value: `${college.city}, ${college.state}` },
                     { label: "Type", value: college.type },
                     { label: "Established", value: college.established ? String(college.established) : "N/A" },
-                    { label: "Rating", value: <><Stars rating={college.rating} /> {college.rating.toFixed(1)}</> },
+                    { label: "Rating", value: college.rating != null ? <><Stars rating={college.rating} /> {Number(college.rating).toFixed(1)}</> : "N/A" },
                     { label: "Fees Range", value: `${formatFees(college.fees_min)} – ${formatFees(college.fees_max)}` },
                     { label: "Courses", value: `${college.courses.length} programs` },
                   ].map((r) => (
@@ -367,7 +368,7 @@ export default function CollegeDetailPage() {
                           <div>
                             <Stars rating={r.rating} />
                             <span style={{ fontSize: "0.78rem", color: "var(--text-3)", marginLeft: 6 }}>
-                              {r.rating.toFixed(1)}
+                              {Number(r.rating).toFixed(1)}
                             </span>
                           </div>
                         </div>

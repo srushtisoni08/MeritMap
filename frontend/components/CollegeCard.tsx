@@ -23,9 +23,11 @@ function formatFees(min: number, max: number): string {
   return `${fmt(min)} – ${fmt(max)}`;
 }
 
-function Stars({ rating }: { rating: number }) {
-  const full = Math.floor(rating);
-  const half = rating - full >= 0.5;
+function Stars({ rating }: { rating: number | null }) {
+  if (rating == null) return null;
+  const r = Number(rating);
+  const full = Math.floor(r);
+  const half = r - full >= 0.5;
   return (
     <span className="stars" style={{ fontSize: "0.85rem" }}>
       {Array.from({ length: 5 }, (_, i) => {
@@ -202,7 +204,14 @@ export default function CollegeCard({
             }}
           >
             <Stat label="Fees" value={formatFees(college.fees_min, college.fees_max)} />
-            <Stat label="Rating" value={<><Stars rating={college.rating} /> {college.rating.toFixed(1)}</>} />
+            <Stat
+  label="Rating"
+  value={
+    college.rating != null
+  ? <><Stars rating={Number(college.rating)} /> {Number(college.rating).toFixed(1)}</>
+  : "N/A"
+  }
+/>
             {college.placement_percent != null && (
               <Stat label="Placement" value={`${college.placement_percent}%`} accent />
             )}

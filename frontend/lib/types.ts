@@ -6,7 +6,7 @@ export interface College {
   state: string;
   fees_min: number;
   fees_max: number;
-  rating: number;
+  rating: number | null;
   type: "Government" | "Private" | "Deemed";
   established: number | null;
   placement_percent: number | null;

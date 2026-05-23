@@ -594,7 +594,7 @@ function PredictCard({
               fontWeight: 700,
             }}
           >
-            ★ {college.rating.toFixed(1)}
+            ★ {college.rating != null ? Number(college.rating).toFixed(1) : "N/A"}
           </span>
         </div>
 

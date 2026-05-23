@@ -388,14 +388,14 @@ function SavedCard({
       >
         <Stat label="Fees" value={formatFees(college.fees_min, college.fees_max)} />
         <Stat
-          label="Rating"
-          value={
-            <>
-              <span style={{ color: "var(--accent-2)" }}>★ </span>
-              {college.rating.toFixed(1)}
-            </>
-          }
-        />
+  label="Rating"
+  value={
+    <>
+      <span style={{ color: "var(--accent-2)" }}>★ </span>
+      {college.rating?.toFixed(1) ?? "N/A"}
+    </>
+  }
+/>
         {college.placement_percent != null && (
           <Stat
             label="Placement"

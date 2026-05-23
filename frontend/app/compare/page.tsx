@@ -70,7 +70,7 @@ const ROWS: CompareRow[] = [
     format: (c) => (
       <span style={{ fontWeight: 700 }}>
         <span style={{ color: "var(--accent-2)" }}>★ </span>
-        {Number(c.rating).toFixed(1)} / 5
+        {c.rating != null ? Number(c.rating).toFixed(1) : "N/A"} / 5
       </span>
     ),
     highlight: "high",
@@ -542,7 +542,7 @@ function CompareTable({
                   }}
                 />
               )}
-               {row.format ? row.format(c) : String((c as unknown as Record<string, unknown>)[row.key as string] ?? "N/A")}
+              {row.format ? row.format(c) : String((c as unknown as Record<string, unknown>)[row.key as string] ?? "N/A")}
               {isBest && (
                 <span
                   style={{

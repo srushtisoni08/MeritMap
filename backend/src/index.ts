@@ -1,86 +1,60 @@
-// ─── Database row types ───────────────────────────────────────────────────────
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
 
-export interface College {
-  id: number;
-  name: string;
-  location: string;
-  city: string;
-  state: string;
-  fees_min: number;
-  fees_max: number;
-  rating: number;
-  type: "Government" | "Private" | "Deemed";
-  established: number | null;
-  placement_percent: number | null;
-  avg_package: number | null;
-  highest_package: number | null;
-  image_url: string | null;
-  description: string | null;
-  website: string | null;
-  courses: string[];
-  created_at: Date;
-}
+import authRoutes from "./routes/auth";
+import collegeRoutes from "./routes/colleges";
+import compareRoutes from "./routes/compare";
+import savedRoutes from "./routes/saved";
 
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  password: string;
-  created_at: Date;
-}
+dotenv.config();
 
-export interface Review {
-  id: number;
-  college_id: number;
-  user_id: number | null;
-  rating: number;
-  comment: string | null;
-  author_name: string | null;
-  created_at: Date;
-}
+const app = express();
+const PORT = process.env.PORT ?? 4000;
 
-export interface SavedCollege {
-  id: number;
-  user_id: number;
-  college_id: number;
-  created_at: Date;
-}
+// ─── Middleware ───────────────────────────────────────────────────────────────
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL ?? "http://localhost:3000",
+    credentials: true,
+  })
+);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// ─── Request / Response types ─────────────────────────────────────────────────
+// ─── Health check ─────────────────────────────────────────────────────────────
+app.get("/health", (_req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
 
-export interface RegisterBody {
-  name: string;
-  email: string;
-  password: string;
-}
+// ─── Routes ───────────────────────────────────────────────────────────────────
+app.use("/api/auth", authRoutes);
+app.use("/api/colleges", collegeRoutes);
+app.use("/api/compare", compareRoutes);
+app.use("/api/saved", savedRoutes);
 
-export interface LoginBody {
-  email: string;
-  password: string;
-}
+// ─── 404 handler ──────────────────────────────────────────────────────────────
+app.use((_req, res) => {
+  res.status(404).json({ error: "Route not found" });
+});
 
-export interface CollegeQuery {
-  search?: string;
-  state?: string;
-  type?: string;
-  fees_max?: string;
-  course?: string;
-  page?: string;
-  limit?: string;
-  sort?: "rating" | "fees_min" | "placement_percent" | "name";
-  order?: "asc" | "desc";
-}
-
-export interface JwtPayload {
-  userId: number;
-  email: string;
-}
-
-// Augment Express Request
-declare global {
-  namespace Express {
-    interface Request {
-      user?: JwtPayload;
-    }
+// ─── Global error handler ─────────────────────────────────────────────────────
+app.use(
+  (
+    err: Error,
+    _req: express.Request,
+    res: express.Response,
+    _next: express.NextFunction
+  ) => {
+    console.error("Unhandled error:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
-}
+);
+
+// ─── Start ────────────────────────────────────────────────────────────────────
+app.listen(PORT, () => {
+  console.log(`🚀 CampusCompass API running on http://localhost:${PORT}`);
+  console.log(`   Health: http://localhost:${PORT}/health`);
+});
+
+export default app;

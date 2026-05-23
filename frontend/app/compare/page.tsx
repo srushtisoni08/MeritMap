@@ -70,7 +70,7 @@ const ROWS: CompareRow[] = [
     format: (c) => (
       <span style={{ fontWeight: 700 }}>
         <span style={{ color: "var(--accent-2)" }}>★ </span>
-        {c.rating.toFixed(1)} / 5
+        {Number(c.rating).toFixed(1)} / 5
       </span>
     ),
     highlight: "high",
